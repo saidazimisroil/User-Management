@@ -15,13 +15,15 @@
         <div class="container">
             <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
                 <div class="col-md-3 mb-2 mb-md-0">
-                    <a href="/users" class="d-inline-flex link-body-emphasis text-decoration-none">USERS MANAGEMENT SYSTEM</a>
+                    <a href="/users" class="d-inline-flex link-body-emphasis text-decoration-none"><b>USERS MANAGEMENT</b></a>
                 </div>
-
-                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="/users" class="nav-link px-2 link-secondary">Home</a></li>
-                </ul>
-
+                
+                {% if app.user %}
+                    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                        <li class="nav-link px-2 link-secondary">Welcome, {{ app.user.name }}!</li>
+                    </ul>
+                {% endif %}
+                
                 <div class="col-md-3 text-end">
                     {% if app.user %}
                         <a href="/logout" class="btn btn-outline-danger me-2">Log out</a>
