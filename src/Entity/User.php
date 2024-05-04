@@ -43,12 +43,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $registrationTime = null;
 
+    #[ORM\Column(length: 8)]
+    private ?UserStatusEnum $status = null;
+
     public function __construct()
     {
         $this->registrationTime = new \DateTimeImmutable();
         $this->lastLoginTime = new \DateTimeImmutable();
         // Initialize with default admin role
         $this->roles = ['ROLE_ADMIN'];
+        $this->status = UserStatusEnum::ACTIVE;
     }
     
     public function getId(): ?int
@@ -158,6 +162,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRegistrationTime(\DateTimeImmutable $registrationTime): static
     {
         $this->registrationTime = $registrationTime;
+
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status->value;
+    }
+
+    public function setStatus(UserStatusEnum $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

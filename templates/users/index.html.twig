@@ -3,32 +3,40 @@
 {% block title %}Hello UsersController!{% endblock %}
 
 {% block body %}
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <a href="/users/delete-all" class="btn btn-primary me-md-2" type="button">Delete All</a>
-    </div>
+{# Toolbar actions #}
 
-    <table class="table">
-        <thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Last Login Time</th>
+            <th scope="col">Registration Time</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Last Login Time</th>
-                <th scope="col">Registration Time</th>
-                <th scope="col">Axtions</th>
+                <td>{{ u.id }}</td>
+                <td>{{ u.name }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.lastLoginTime|date('Y-m-d H:i:s') }}</td>
+                <td>{{ u.registrationTime|date('Y-m-d H:i:s') }}</td>
+                <td>{{ u.status }}</td>
+                <td>
+                {% if u.status == 'active' %}
+                    <a href="/users/block/{{ u.id }}" class="btn btn-warning">Block</a>
+                {% else %}
+                    <a href="/users/unblock/{{ u.id }}" class="btn btn-success">Unblock</a>
+                {% endif %}
+                    <a href="/users/delete/{{ u.id }}" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            {% for u in users %}
-                <tr>
-                    <td>{{ u.id }}</td>
-                    <td>{{ u.name }}</td>
-                    <td>{{ u.email }}</td>
-                    <td>{{ u.lastLoginTime|date('Y-m-d H:i:s') }}</td>
-                    <td>{{ u.registrationTime|date('Y-m-d H:i:s') }}</td>
-                    <td><a href="/users/delete/{{ u.id }}" class="btn btn-danger">Delete</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
