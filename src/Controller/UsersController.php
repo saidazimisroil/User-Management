@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\UserStatusEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -85,5 +86,21 @@ class UsersController extends AbstractController
     
         $this->addFlash('success', 'User unblocked successfully.');
         return $this->redirect('/users');
+    }
+    #[Route('/delete-all', name: 'app_users_delete_all')]
+    public function deleteAll(EntityManagerInterface $entityManager): Response
+    {
+        // Get the repository of the User entity
+        $userRepository = $entityManager->getRepository(User::class);
+
+        // Create a Query to delete all users
+        $query = $entityManager->createQuery('DELETE FROM App\Entity\User');
+        $numDeleted = $query->execute(); // Execute the deletion
+
+        // Flash a message to the session to confirm deletion
+        $this->addFlash('success', $numDeleted . ' users have been deleted.');
+
+        // Redirect to another page, such as the users list
+        return $this->redirectToRoute('app_users');
     }
 }
