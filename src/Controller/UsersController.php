@@ -16,9 +16,17 @@ class UsersController extends AbstractController
     #[Route('/', name: 'app_users')]
     public function index(UserRepository $repository): Response
     {
+        $userAuth = $this->getUser();
+        $user = $repository->findBy(['email' => $userAuth->getUserIdentifier()]);
+        $status = $user[0]->getStatus();
+        if ($status == 'blocked') {
+            return $this->redirectToRoute('app_users_blocked');
+        }
+
         $users = $repository->findAll();
         return $this->render('users/index.html.twig', [
             'users' => $users,
+            'status' => $status,
         ]);
     }
 
@@ -28,7 +36,7 @@ class UsersController extends AbstractController
         $user = $repository->find($id);
         if (!$user) {
             $this->addFlash('error', 'User not found.');
-            return $this->redirect('/users');
+                return $this->redirectToRoute('app_users');
         }
     
         try {
@@ -37,11 +45,11 @@ class UsersController extends AbstractController
         } catch (\Exception $e) {
             // Log the exception or handle it accordingly
             $this->addFlash('error', 'Could not delete user.');
-            return $this->redirect('/users');
+            return $this->redirectToRoute('app_users');
         }
     
         $this->addFlash('success', 'User deleted successfully.');
-        return $this->redirect('/users');
+        return $this->redirectToRoute('app_users');
     }
 
     #[Route('/block/{id<\d+>}', name: 'app_users_block_one')]
@@ -50,7 +58,7 @@ class UsersController extends AbstractController
         $user = $repository->find($id);
         if (!$user) {
             $this->addFlash('error', 'User not found.');
-            return $this->redirect('/users');
+            return $this->redirectToRoute('app_users');
         }
     
         try {
@@ -59,11 +67,11 @@ class UsersController extends AbstractController
         } catch (\Exception $e) {
             // Log the exception or handle it accordingly
             $this->addFlash('error', 'Could not block user.');
-            return $this->redirect('/users');
+            return $this->redirectToRoute('app_users');
         }
     
         $this->addFlash('success', 'User blocked successfully.');
-        return $this->redirect('/users');
+        return $this->redirectToRoute('app_users');
     }
 
     #[Route('/unblock/{id<\d+>}', name: 'app_users_unblock_one')]
@@ -72,7 +80,7 @@ class UsersController extends AbstractController
         $user = $repository->find($id);
         if (!$user) {
             $this->addFlash('error', 'User not found.');
-            return $this->redirect('/users');
+            return $this->redirectToRoute('app_users');
         }
     
         try {
@@ -81,11 +89,11 @@ class UsersController extends AbstractController
         } catch (\Exception $e) {
             // Log the exception or handle it accordingly
             $this->addFlash('error', 'Could not unblock user.');
-            return $this->redirect('/users');
+            return $this->redirectToRoute('app_users');
         }
     
         $this->addFlash('success', 'User unblocked successfully.');
-        return $this->redirect('/users');
+        return $this->redirectToRoute('app_users');
     }
     #[Route('/delete-all', name: 'app_users_delete_all')]
     public function deleteAll(EntityManagerInterface $entityManager): Response
@@ -102,5 +110,10 @@ class UsersController extends AbstractController
 
         // Redirect to another page, such as the users list
         return $this->redirectToRoute('app_users');
+    }
+    #[Route('/you-are-blocked', name: 'app_users_blocked')]
+    public function blocked(): Response
+    {
+        return $this->render('users/blocked.html.twig');
     }
 }
